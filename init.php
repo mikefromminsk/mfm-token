@@ -1,7 +1,7 @@
 <?php
 include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-token/utils.php";
 
-if (!DEBUG) error("cannot use not in debug session");
+onlyInDebug();
 
 requestEquals("/mfm-data/init.php");
 

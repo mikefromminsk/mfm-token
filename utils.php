@@ -73,15 +73,26 @@ function tokenScriptReg($domain, $address, $script)
     }
 }
 
+function requestAccount($domain, $address)
+{
+    return http_post("/mfm-token/account.php", [
+        domain => $domain,
+        address => $address,
+    ]);
+}
+
 function tokenSendAndCommit($domain, $from, $to, $password, $amount)
 {
-    if (getAccount($domain, $from) != null) {
+    $account = requestAccount($domain, $from);
+    if ($account != null) {
+        $key = tokenKey($domain, $from, $password, $account[prev_key]);
+        $next_hash = tokenNextHash($domain, $from, $password, $key);
         return requestEquals("/mfm-token/send.php", [
             domain => $domain,
             from_address => $from,
             to_address => $to,
             amount => "$amount",
-            pass => tokenPass($domain, $from, $password),
+            pass => "$key:$next_hash",
         ]);
     } else {
         return false;
@@ -263,3 +274,16 @@ function commit($response = null)
     echo json_encode_readable($response);
 }
 
+
+function getDomains($address = null, $search_text = null, $limit = 20, $page = 0)
+{
+    $sql = "select distinct `domain` from accounts where 1=1";
+    if ($address != null) {
+        $sql .= " and `address` = '$address'";
+    }
+    if ($search_text != null && $search_text != "") {
+        $sql .= " and `domain` like '$search_text%'";
+    }
+    $sql .= " limit " . $page * $limit . ", $limit";
+    return selectList($sql);
+}
