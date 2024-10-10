@@ -1,8 +1,8 @@
 {
     "name": "mfm-token",
-    "version": "1.0.9",
+    "version": "1.1.21",
     "author": "x29a100@gmail.com",
     "dependencies": {
-        "mfm-data": "^1.0.0"
+        "mfm-data": "latest"
     }
 }

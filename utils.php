@@ -274,7 +274,6 @@ function commit($response = null)
     echo json_encode_readable($response);
 }
 
-
 function getDomains($address = null, $search_text = null, $limit = 20, $page = 0)
 {
     $sql = "select distinct `domain` from accounts where 1=1";
