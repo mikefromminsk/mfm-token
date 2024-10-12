@@ -5,8 +5,8 @@ onlyInDebug();
 
 requestEquals("/mfm-data/init.php");
 
-$address = get_required(address);
-$password = get_required(password);
+$address = get_required(wallet_admin_address);
+$password = get_required(wallet_admin_password);
 
 query("DROP TABLE IF EXISTS `accounts`;");
 query("CREATE TABLE IF NOT EXISTS `accounts` (
