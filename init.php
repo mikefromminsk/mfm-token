@@ -37,6 +37,10 @@ $gas_domain = get_required(gas_domain);
 
 tokenAccountReg($gas_domain, $address, $password, 100000000);
 
+if (!tokenAccountReg($gas_domain, user, pass)) {
+    error("user already exists");
+}
+
 $response[success] = true;
 
 echo json_encode($response);

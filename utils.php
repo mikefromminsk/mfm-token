@@ -43,6 +43,7 @@ function tokenAddressBalance($domain, $address)
 
 function tokenAccountReg($domain, $address, $password, $amount = 0)
 {
+    // block if $amount > 0 and domain exists
     if (getAccount($domain, $address) == null) {
         return requestEquals("/mfm-token/send.php", [
             domain => $domain,
@@ -271,7 +272,7 @@ function commit($response = null)
     }
     commitAccounts();
     commitTrans();
-    echo json_encode_readable($response);
+    echo json_encode($response, JSON_PRETTY_PRINT);
 }
 
 function getDomains($address = null, $search_text = null, $limit = 20, $page = 0)
