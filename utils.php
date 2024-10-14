@@ -2,7 +2,7 @@
 include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-data/utils.php";
 include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-data/track.php";
 
-$gas_domain = "usdt";
+$gas_domain = get_config_required(gas_domain);
 
 function tokenKey($domain, $address, $password, $prev_key = "")
 {
@@ -25,6 +25,11 @@ function tokenPass($domain, $address, $password)
 function tokenFirstTran($domain)
 {
     return selectRow("select * from `trans` where `domain` = '$domain' and `from` = 'owner' order by `time` asc limit 1");
+}
+
+function tokenLastTran($domain, $address)
+{
+    return selectRow("select * from `trans` where `domain` = '$domain' and `to` = '$address' order by `time` desc limit 1");
 }
 
 function tokenOwner($domain)
@@ -272,7 +277,7 @@ function commit($response = null)
     }
     commitAccounts();
     commitTrans();
-    echo json_encode($response, JSON_PRETTY_PRINT);
+    die(json_encode($response, JSON_PRETTY_PRINT));
 }
 
 function getDomains($address = null, $search_text = null, $limit = 20, $page = 0)
