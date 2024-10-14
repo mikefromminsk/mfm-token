@@ -37,7 +37,7 @@ function tokenOwner($domain)
     return tokenFirstTran($domain)[to];
 }
 
-function tokenAddressBalance($domain, $address)
+function tokenBalance($domain, $address)
 {
     $address = getAccount($domain, $address);
     if ($address != null) {
@@ -193,7 +193,7 @@ function tokenSend(
     }
     if ($from_address == owner) {
         if (strlen($domain) < 3 || strlen($domain) > 32) error("domain length has to be between 3 and 32");
-        if (tokenAddressBalance($domain, owner) === null) {
+        if (tokenBalance($domain, owner) === null) {
             setAccount($domain, owner, [
                 prev_key => "",
                 next_hash => "",
@@ -201,7 +201,7 @@ function tokenSend(
                 delegate => "mfm-token/send.php",
             ]);
         }
-        if (tokenAddressBalance($domain, $to_address) === null) {
+        if (tokenBalance($domain, $to_address) === null) {
             setAccount($domain, $to_address, [
                 prev_key => "",
                 next_hash => $next_hash,
