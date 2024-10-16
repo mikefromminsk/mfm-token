@@ -1,5 +1,5 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-token/utils.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-data/utils.php";
 
 onlyInDebug();
 

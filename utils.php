@@ -1,6 +1,6 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-data/utils.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-data/track.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-db/utils.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-analytics/utils.php";
 
 $gas_domain = get_config_required(gas_domain);
 
@@ -264,37 +264,6 @@ function tokenSend(
     ]);
 }
 
-function spendGasOf($gas_address, $gas_password)
-{
-    $gas_domain = get_required(gas_domain);
-    $GLOBALS[gas_pass] = tokenPass($gas_domain, $gas_address, $gas_password);
-}
-
-function commit($response = null)
-{
-    if ($response == null)
-        $response = [];
-    $response[success] = true;
-    $gas_rows = 0;
-    $gas_rows += count($GLOBALS[new_data]);
-    $gas_rows += count($GLOBALS[new_history]);
-    $gas_spent = 0.001 * $gas_rows;
-
-    if ($gas_rows != 0) {
-        tokenSend(
-            $GLOBALS[gas_domain],
-            get_required(gas_address),
-            admin,
-            $gas_spent,
-            get_required(gas_pass),
-        );
-        commitData();
-        $response[gas_spend] = $gas_spent;
-    }
-    commitAccounts();
-    commitTrans();
-    die(json_encode($response, JSON_PRETTY_PRINT));
-}
 
 function getDomains($address = null, $search_text = null, $limit = 20, $page = 0)
 {
