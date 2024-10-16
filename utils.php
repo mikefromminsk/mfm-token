@@ -22,9 +22,25 @@ function tokenPass($domain, $address, $password)
     return "$key:$next_hash";
 }
 
+function tokenTrans($domain, $address, $page, $size)
+{
+    $sql = "select * from trans where 1 = 1";
+    if ($address != null)
+        $sql .= " and (`from` = '$address' or `to` = '$address')";
+    if ($domain != null)
+        $sql .= " and `domain` = '$domain'";
+    $sql .= " order by time desc limit " . ($page - 1) * $size . ", $size";
+    return select($sql);
+}
+
 function tokenFirstTran($domain)
 {
     return selectRow("select * from `trans` where `domain` = '$domain' and `from` = 'owner' order by `time` asc limit 1");
+}
+
+function tokenTran($next_hash)
+{
+    return selectRow("select * from `trans` where `next_hash` = '$next_hash'");
 }
 
 function tokenLastTran($domain, $address)
