@@ -87,7 +87,6 @@ function tokenScriptReg($domain, $address, $script)
             to_address => $address,
             amount => "0", // TODO если отправить 0 то ошибка
             pass => ":",
-            script => $script,
             delegate => $script,
         ]);
     } else {
@@ -207,6 +206,9 @@ function tokenSend(
         $key = explode(":", $pass)[0];
         $next_hash = explode(":", $pass)[1];
     }
+    if ($amount !== round($amount, 2)) error("amount tick is 0.01");
+    if ($amount < 0) error("amount less than 0");
+
     if ($from_address == owner) {
         if (strlen($domain) < 3 || strlen($domain) > 32) error("domain length has to be between 3 and 32");
         if (tokenBalance($domain, owner) === null) {
@@ -249,8 +251,24 @@ function tokenSend(
             next_hash => $next_hash,
         ]);
     }
+
+    $first_tran = tokenFirstTran($domain);
+    $owner_address = $first_tran[to];
+    $owner = getAccount($domain, $owner_address);
+    $fee = 0;
+    if ($owner != null
+        && $from_address != $owner_address
+        && strpos($from_address, exchange_) !== 0 // can be removed
+        && strpos($to_address, exchange_) !== 0) {
+        $fee_percent = round($owner[balance]  / $first_tran[amount] * 100, 2);
+        $fee = round($amount * $fee_percent / 100, 2);
+        setAccount($domain, $owner_address, [
+            balance => $owner[balance] + $fee
+        ]);
+    }
+
     setAccount($domain, $to_address, [
-        balance => $to[balance] + $amount
+        balance => $to[balance] + $amount - $fee
     ]);
 
     saveTran([
@@ -258,6 +276,7 @@ function tokenSend(
         from => $from_address,
         to => $to_address,
         amount => $amount,
+        fee => $fee,
         key => $key,
         next_hash => $next_hash,
         time => time(),

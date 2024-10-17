@@ -28,6 +28,7 @@ query("CREATE TABLE IF NOT EXISTS `trans` (
   `next_hash` varchar(256) COLLATE utf8_bin NOT NULL,
   `delegate` varchar(256) COLLATE utf8_bin DEFAULT NULL,
   `amount` float NOT NULL,    
+  `fee` float NOT NULL,    
   `time` int(11) NOT NULL,    
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
