@@ -231,7 +231,8 @@ function tokenSend(
 
     $from = getAccount($domain, $from_address);
     $to = getAccount($domain, $to_address);
-    if ($from[balance] < $amount) error(strtoupper($domain) . " balance is not enough in $from_address wallet");
+    $from[balance] = round($from[balance], 2);
+    if ($from[balance] < $amount) error(strtoupper($domain) . " balance is not enough in $from_address wallet. Balance: $from[balance] Amount: $amount");
     if ($to == null) error("$to_address receiver doesn't exist");
     if ($from[delegate] != null) {
         if ($from[delegate] != scriptPath())
@@ -242,11 +243,11 @@ function tokenSend(
 
     if ($from[delegate] != null) {
         setAccount($domain, $from_address, [
-            balance => $from[balance] - $amount,
+            balance => round($from[balance] - $amount, 2),
         ]);
     } else {
         setAccount($domain, $from_address, [
-            balance => $from[balance] - $amount,
+            balance => round($from[balance] - $amount, 2),
             prev_key => $key,
             next_hash => $next_hash,
         ]);
@@ -256,18 +257,19 @@ function tokenSend(
     $owner_address = $first_tran[to];
     $owner = getAccount($domain, $owner_address);
     $fee = 0;
-    if ($owner != null
+/*    if ($owner != null
+        && $from_address != $owner_address
         && strpos($from_address, exchange_) !== 0 // can be removed
         && strpos($to_address, exchange_) !== 0) {
         $fee_percent = round($owner[balance]  / $first_tran[amount] * 100, 2);
         $fee = round($amount / (1 + $fee_percent) * $fee_percent, 2);
         setAccount($domain, $owner_address, [
-            balance => $owner[balance] + $fee
+            balance => round($owner[balance] + $fee, 2)
         ]);
-    }
+    }*/
 
     setAccount($domain, $to_address, [
-        balance => $to[balance] + $amount - $fee
+        balance => round($to[balance] + $amount - $fee, 2)
     ]);
 
     saveTran([

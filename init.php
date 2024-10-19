@@ -15,7 +15,7 @@ query("CREATE TABLE IF NOT EXISTS `accounts` (
   `prev_key` varchar(256) COLLATE utf8_bin NOT NULL,
   `next_hash` varchar(256) COLLATE utf8_bin NOT NULL,
   `delegate` varchar(256) COLLATE utf8_bin DEFAULT NULL,
-  `balance` float NOT NULL
+  `balance` double NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
 
 query("DROP TABLE IF EXISTS `trans`;");
@@ -27,8 +27,8 @@ query("CREATE TABLE IF NOT EXISTS `trans` (
   `key` varchar(256) COLLATE utf8_bin NOT NULL,
   `next_hash` varchar(256) COLLATE utf8_bin NOT NULL,
   `delegate` varchar(256) COLLATE utf8_bin DEFAULT NULL,
-  `amount` float NOT NULL,    
-  `fee` float NOT NULL,    
+  `amount` double NOT NULL,    
+  `fee` double NOT NULL,    
   `time` int(11) NOT NULL,    
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
