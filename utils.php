@@ -257,11 +257,10 @@ function tokenSend(
     $owner = getAccount($domain, $owner_address);
     $fee = 0;
     if ($owner != null
-        && $from_address != $owner_address
         && strpos($from_address, exchange_) !== 0 // can be removed
         && strpos($to_address, exchange_) !== 0) {
         $fee_percent = round($owner[balance]  / $first_tran[amount] * 100, 2);
-        $fee = round($amount * $fee_percent / 100, 2);
+        $fee = round($amount / (1 + $fee_percent) * $fee_percent, 2);
         setAccount($domain, $owner_address, [
             balance => $owner[balance] + $fee
         ]);
