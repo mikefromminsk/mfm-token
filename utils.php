@@ -45,7 +45,7 @@ function tokenTran($next_hash)
 
 function tokenLastTran($domain, $address)
 {
-    return selectRow("select * from `trans` where `domain` = '$domain' and `to` = '$address' order by `time` desc limit 1");
+    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = '$address' order by `time` desc limit 1");
 }
 
 function tokenOwner($domain)
@@ -62,7 +62,7 @@ function tokenBalance($domain, $address)
     return null;
 }
 
-function tokenAccountReg($domain, $address, $password, $amount = 0)
+function tokenRegAccount($domain, $address, $password, $amount = 0)
 {
     // block if $amount > 0 and domain exists
     if (getAccount($domain, $address) == null) {
@@ -78,7 +78,7 @@ function tokenAccountReg($domain, $address, $password, $amount = 0)
     }
 }
 
-function tokenScriptReg($domain, $address, $script)
+function tokenRegScript($domain, $address, $script)
 {
     if (getAccount($domain, $address) == null) {
         return requestEquals("/mfm-token/send.php", [
@@ -232,7 +232,7 @@ function tokenSend(
     $from = getAccount($domain, $from_address);
     $to = getAccount($domain, $to_address);
     $from[balance] = round($from[balance], 2);
-    if ($from[balance] < $amount) error(strtoupper($domain) . " balance is not enough in $from_address wallet. Balance: $from[balance] Amount: $amount");
+    if ($from[balance] < $amount) error(strtoupper($domain) . " balance is not enough in $from_address wallet. Balance: $from[balance] Need: $amount");
     if ($to == null) error("$to_address receiver doesn't exist");
     if ($from[delegate] != null) {
         if ($from[delegate] != scriptPath())

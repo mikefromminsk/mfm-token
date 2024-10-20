@@ -36,9 +36,9 @@ query("CREATE TABLE IF NOT EXISTS `trans` (
 $amount = 1000000000;
 $gas_domain = get_required(gas_domain);
 
-tokenAccountReg($gas_domain, $address, $password, 100000000);
+tokenRegAccount($gas_domain, $address, $password, 100000000);
 
-if (!tokenAccountReg($gas_domain, user, pass)) {
+if (!tokenRegAccount($gas_domain, user, pass)) {
     error("user already exists");
 }
 
