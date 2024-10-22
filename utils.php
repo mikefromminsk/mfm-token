@@ -35,7 +35,7 @@ function tokenTrans($domain, $address, $page, $size)
 
 function tokenFirstTran($domain)
 {
-    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = 'owner' order by `time` asc limit 1");
+    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = 'owner' order by `id` limit 1");
 }
 
 function tokenTran($next_hash)
@@ -45,7 +45,7 @@ function tokenTran($next_hash)
 
 function tokenLastTran($domain, $address)
 {
-    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = '$address' order by `time` desc limit 1");
+    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = '$address' order by `id` desc limit 1");
 }
 
 function tokenOwner($domain)
@@ -185,7 +185,8 @@ function saveTran($tran)
 function commitTrans()
 {
     if ($GLOBALS[trans] != null) {
-        foreach ($GLOBALS[trans] as $tran) {
+        $trans_in_insert_sequence = array_reverse($GLOBALS[trans]);
+        foreach ($trans_in_insert_sequence as $tran) {
             insertRow(trans, $tran);
             broadcast(transactions, $tran);
             trackAccumulate($tran[domain] . _trans);
