@@ -46,8 +46,9 @@ md5(password):md5(password) + prev_hash
 7. получение списка транзакций
 
 ## Development contracts
-1. необходимо унаследовать скрипт mfm-token/utils.php
-2. Получение параметров с помощью утилиты mfm-data/params.php
+Контракты нужно разрабатывать на языке php.
+1. необходимо унаследовать скрипт /mfm-token/utils.php
+2. Получение параметров с помощью утилиты /mfm-data/params.php
     - подробное описание параметров можно найти в документации [mfm-db](https://github.com/mikefromminsk/mfm-db)
 3. проверка параметров на допустимые значения
     - в любой момент контракта можно вызвать функцию error() для завершения выполнения контракта с ошибкой
@@ -58,7 +59,25 @@ md5(password):md5(password) + prev_hash
 6. коммит изменений
     - сохранение всех данных в базе данных должно происходить только после удачного выполнения контракта. Поэтому все данные которые должны быть сохранены в базу данных должны находиться в оперативной памяти до конца выполнения контракта.
 
-### Делегирование аккаунта
+Пример контракта:
+```php
+<?php
+include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-token/utils.php";
+
+// получение параметров
+$domain = get_required(domain);
+$from_address = get_required(from_address);
+$to_address = get_required(to_address);
+$amount = get_int_required(amount);
+$pass = get_required(pass);
+$delegate = get_string(delegate);
+
+// код контракта
+tokenSend($domain, $from_address, $to_address, $amount, $pass, $delegate);
+
+// сохранение изменений
+commit();
+```
 
 ## References
 - [GitHub repository](https://github.com/mikefromminsk/mfm-token)

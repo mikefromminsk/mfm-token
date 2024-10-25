@@ -94,6 +94,22 @@ function tokenRegScript($domain, $address, $script)
     }
 }
 
+function tokenDelegate($domain, $address, $pass, $script)
+{
+    if (getAccount($domain, $address) != null) {
+        return requestEquals("/mfm-token/send.php", [
+            domain => $domain,
+            from_address => owner,
+            to_address => $address,
+            amount => "0", // TODO если отправить 0 то ошибка
+            pass => $pass,
+            delegate => $script,
+        ]);
+    } else {
+        return false;
+    }
+}
+
 function requestAccount($domain, $address)
 {
     return http_post("/mfm-token/account.php", [
@@ -236,8 +252,8 @@ function tokenSend(
     if ($from[balance] < $amount) error(strtoupper($domain) . " balance is not enough in $from_address wallet. Balance: $from[balance] Need: $amount");
     if ($to == null) error("$to_address receiver doesn't exist");
     if ($from[delegate] != null) {
-        if ($from[delegate] != scriptPath())
-            error("script " . scriptPath() . " cannot use $from_address address. Only " . $from[delegate]);
+        if ($from[delegate] != getScriptPath())
+            error("script " . getScriptPath() . " cannot use $from_address address. Only " . $from[delegate]);
     } else {
         if ($from[next_hash] != md5($key)) error("$domain key is not right");
     }
