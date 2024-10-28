@@ -60,7 +60,7 @@ md5(password):md5(password) + prev_hash
 Пример контракта:
 ```php
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-token/utils.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-token/utils.php";
 
 // получение параметров
 $domain = get_required(domain);

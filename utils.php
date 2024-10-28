@@ -1,6 +1,6 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-db/utils.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-analytics/utils.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-db/utils.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-analytics/utils.php";
 
 $gas_domain = get_config_required(gas_domain);
 
@@ -108,6 +108,28 @@ function tokenDelegate($domain, $address, $pass, $script)
     } else {
         return false;
     }
+}
+
+function tokenUndelegate($domain, $address)
+{
+    if (getAccount($domain, $address) != null) {
+        return requestEquals("/mfm-token/send.php", [
+            domain => $domain,
+            from_address => owner,
+            to_address => $address,
+            amount => "0", // TODO если отправить 0 то ошибка
+            pass => ":",
+            delegate => "",
+        ]);
+    } else {
+        return false;
+    }
+}
+
+function tokenAuthenticate($address, $pass)
+{
+    $gas_address = get_required(gas_address);
+    tokenSend($gas_address, $address, $address, 0, $pass);
 }
 
 function requestAccount($domain, $address)
