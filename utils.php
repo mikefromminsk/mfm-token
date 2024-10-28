@@ -264,6 +264,11 @@ function tokenSend(
                 delegate => "mfm-token/send.php",
             ]);
         }
+        $gas_domain = get_required(gas_domain);
+        $gas_account = getAccount($gas_domain, $to_address);
+        if ($domain != $gas_domain && $gas_account[delegate] != null) {
+            $delegate = $gas_account[delegate];
+        }
         if (tokenBalance($domain, $to_address) === null) {
             setAccount($domain, $to_address, [
                 prev_key => "",
