@@ -1,7 +1,7 @@
 <?php
-require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-token/utils.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-data/utils.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-analytics/utils.php";
+require_once $_SERVER[DOCUMENT_ROOT] . "/mfm-token/utils.php";
+include_once $_SERVER[DOCUMENT_ROOT] . "/mfm-data/utils.php";
+include_once $_SERVER[DOCUMENT_ROOT] . "/mfm-analytics/utils.php";
 
 $domain = get_required(domain);
 $address = get_string(address);

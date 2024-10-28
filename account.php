@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-data/utils.php";
+require_once $_SERVER[DOCUMENT_ROOT] . "/mfm-data/utils.php";
 
 $domain = get_required(domain);
 $address = get_required(address);
