@@ -43,9 +43,15 @@ function tokenTran($next_hash)
     return selectRow("select * from `trans` where `next_hash` = '$next_hash'");
 }
 
-function tokenLastTran($domain, $address)
+function tokenLastTran($domain, $from_address, $to_address = null)
 {
-    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = '$address' order by `id` desc limit 1");
+    $sql = "select * from `trans` where `domain` = '$domain'";
+    if ($from_address != null)
+        $sql .= " and `from` = '$from_address'";
+    if ($to_address != null)
+        $sql .= " and `to` = '$to_address'";
+    $sql .= " order by `id` desc limit 1";
+    return selectRow($sql);
 }
 
 function tokenOwner($domain)
@@ -140,7 +146,7 @@ function requestAccount($domain, $address)
     ]);
 }
 
-function tokenSendAndCommit($domain, $from, $to, $password, $amount)
+function tokenSendAndCommit($domain, $from, $to, $amount, $password)
 {
     $account = requestAccount($domain, $from);
     if ($account != null) {
