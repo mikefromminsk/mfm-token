@@ -1,6 +1,6 @@
 <?php
-require_once $_SERVER[DOCUMENT_ROOT] . "/mfm-db/utils.php";
-require_once $_SERVER[DOCUMENT_ROOT] . "/mfm-analytics/utils.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-db/utils.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-analytics/utils.php";
 
 $gas_domain = get_config_required(gas_domain);
 
