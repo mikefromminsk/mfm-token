@@ -100,8 +100,9 @@ function tokenRegScript($domain, $address, $script)
     }
 }
 
+// ???
 function tokenDelegate($domain, $address, $pass, $script)
-{
+{   ///!!!!! dont $pass  !!!!!!!!!!
     if (getAccount($domain, $address) != null) {
         return requestEquals("/mfm-token/send.php", [
             domain => $domain,
@@ -109,7 +110,7 @@ function tokenDelegate($domain, $address, $pass, $script)
             to_address => $address,
             amount => "0", // TODO если отправить 0 то ошибка
             pass => $pass,
-            delegate => $script,
+//            delegate => $script,
         ]);
     } else {
         return false;
@@ -129,6 +130,13 @@ function tokenUndelegate($domain, $address)
         ]);
     } else {
         return false;
+    }
+}
+
+function tokenUndelegateAll($address)
+{
+    foreach (getDomains($address) as $domain) {
+        tokenUndelegate($domain, $address);
     }
 }
 
@@ -220,16 +228,16 @@ function getAccount($domain, $address)
 
 function saveTran($tran)
 {
-    if ($GLOBALS[trans] == null) {
-        $GLOBALS[trans] = [];
+    if ($GLOBALS[token_trans] == null) {
+        $GLOBALS[token_trans] = [];
     }
-    $GLOBALS[trans][] = $tran;
+    $GLOBALS[token_trans][] = $tran;
 }
 
 function commitTrans()
 {
-    if ($GLOBALS[trans] != null) {
-        $trans_in_insert_sequence = array_reverse($GLOBALS[trans]);
+    if ($GLOBALS[token_trans] != null) {
+        $trans_in_insert_sequence = array_reverse($GLOBALS[token_trans]);
         foreach ($trans_in_insert_sequence as $tran) {
             insertRow(trans, $tran);
             broadcast(transactions, $tran);
@@ -251,7 +259,7 @@ function tokenSend(
         $key = explode(":", $pass)[0];
         $next_hash = explode(":", $pass)[1];
     }
-    if ($amount !== round($amount, 2)) error("amount tick is 0.01");
+    if ($amount != round($amount, 2)) error("amount tick is 0.01");
     if ($amount < 0) error("amount less than 0");
 
     if ($from_address == owner) {

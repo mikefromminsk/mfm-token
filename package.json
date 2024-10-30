@@ -1,6 +1,6 @@
 {
     "name": "mfm-token",
-    "version": "1.1.28",
+    "version": "1.1.30",
     "author": "x29a100@gmail.com",
     "dependencies": {
         "mfm-analytics": "latest"
