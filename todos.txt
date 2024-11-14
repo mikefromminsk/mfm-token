@@ -1,4 +1,11 @@
 
+
+
+
+поменять owner на token_creator или другой для сообщения
+    You have received 1 ROCK from [owner]
+
+
 $$$ заказать документацию разработки контрактов
     $ все readme.md сделать на структуре https://github.com/php-telegram-bot/core
     Указать readme.md что после npm install нужно переместить папку node_modules в папку с проектом
