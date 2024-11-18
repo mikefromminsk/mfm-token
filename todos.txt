@@ -1,6 +1,6 @@
 
-
-
+TPS
+    merge all insert and update request in one sql request
 
 разбить send.php на несколько файлов
     делегация

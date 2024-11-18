@@ -175,18 +175,23 @@ function tokenSendAndCommit($domain, $from, $to, $amount, $password)
 function commitAccounts()
 {
     if ($GLOBALS[accounts] != null) {
+        $total_insert_count = 0;
         foreach ($GLOBALS[accounts] as $domain => $accounts) {
+            $domain_insert_count = 0;
             foreach ($accounts as $address => $account) {
                 $commit = $account[commit];
                 unset($account[commit]);
                 if ($commit == insert) {
                     insertRow(accounts, $account);
-                    trackAccumulate($domain . _accounts);
+                    $domain_insert_count++;
+                    $total_insert_count++;
                 } else if ($commit == update) {
                     updateWhere(accounts, $account, [domain => $domain, address => $address]);
                 }
             }
+            trackAccumulate($domain . _accounts, $domain_insert_count);
         }
+        trackAccumulate(all_accounts, $total_insert_count);
     }
 }
 
@@ -243,6 +248,7 @@ function commitTrans()
             broadcast(transactions, $tran);
             trackAccumulate($tran[domain] . _trans);
         }
+        trackAccumulate(all_trans, count($trans_in_insert_sequence));
     }
 }
 
@@ -261,7 +267,6 @@ function tokenSend(
     }
     if ($amount != round($amount, 2)) error("amount tick is 0.01");
     if ($amount < 0) error("amount less than 0");
-
     if ($from_address == owner) {
         if (strlen($domain) < 3 || strlen($domain) > 32) error("domain length has to be between 3 and 32");
         if (tokenBalance($domain, owner) === null) {
@@ -311,20 +316,20 @@ function tokenSend(
         ]);
     }
 
-    $first_tran = tokenFirstTran($domain);
-    $owner_address = $first_tran[to];
-    $owner = getAccount($domain, $owner_address);
     $fee = 0;
-/*    if ($owner != null
-        && $from_address != $owner_address
-        && strpos($from_address, exchange_) !== 0 // can be removed
-        && strpos($to_address, exchange_) !== 0) {
-        $fee_percent = round($owner[balance]  / $first_tran[amount] * 100, 2);
-        $fee = round($amount / (1 + $fee_percent) * $fee_percent, 2);
-        setAccount($domain, $owner_address, [
-            balance => round($owner[balance] + $fee, 2)
-        ]);
-    }*/
+    /*$first_tran = tokenFirstTran($domain);
+        $owner_address = $first_tran[to];
+        $owner = getAccount($domain, $owner_address);
+        if ($owner != null
+            && $from_address != $owner_address
+            && strpos($from_address, exchange_) !== 0 // can be removed
+            && strpos($to_address, exchange_) !== 0) {
+            $fee_percent = round($owner[balance]  / $first_tran[amount] * 100, 2);
+            $fee = round($amount / (1 + $fee_percent) * $fee_percent, 2);
+            setAccount($domain, $owner_address, [
+                balance => round($owner[balance] + $fee, 2)
+            ]);
+        }*/
 
     setAccount($domain, $to_address, [
         balance => round($to[balance] + $amount - $fee, 2)

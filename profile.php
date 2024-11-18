@@ -21,7 +21,7 @@ $token[balance] = tokenBalance($domain, $address);
 $token[price] = getCandleLastValue($domain . _price);
 $token[price24] = getCandleChange24($domain . _price);
 $token[trans] = getCandleLastValue($domain . _trans);
-$token[addresses] = getCandleLastValue($domain . _addresses);
+$token[addresses] = getCandleLastValue($domain . _accounts);
 $token[volume] = getCandleLastValue($domain . _volume);
 
 $token[mcap] = $token[total] * $token[price];
