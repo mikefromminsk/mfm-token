@@ -22,9 +22,11 @@ $token[price] = getCandleLastValue($domain . _price);
 $token[price24] = getCandleChange24($domain . _price);
 $token[trans] = getCandleLastValue($domain . _trans);
 $token[accounts] = getCandleLastValue($domain . _accounts);
-$token[all_trans] = getCandleLastValue(all_trans);
-$token[all_accounts] = getCandleLastValue(all_accounts);
+$token[trans_count] = getCandleLastValue(trans_count);
+$token[accounts_count] = getCandleLastValue(accounts_count);
+$token[tokens_count] = getCandleLastValue(tokens_count);
 $token[volume] = getCandleLastValue($domain . _volume);
+$token[emitting] = str_replace("mfm-", "", explode('/', tokenSecondTran($domain)[delegate] ?: "by owner")[0]);
 
 $token[mcap] = $token[total] * $token[price];
 

@@ -38,6 +38,11 @@ function tokenFirstTran($domain)
     return selectRow("select * from `trans` where `domain` = '$domain' and `from` = 'owner' order by `id` limit 1");
 }
 
+function tokenSecondTran($domain)
+{
+    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = 'owner' order by `id` limit 1, 1");
+}
+
 function tokenTran($next_hash)
 {
     return selectRow("select * from `trans` where `next_hash` = '$next_hash'");
@@ -191,7 +196,7 @@ function commitAccounts()
             }
             trackAccumulate($domain . _accounts, $domain_insert_count);
         }
-        trackAccumulate(all_accounts, $total_insert_count);
+        trackAccumulate(accounts_count, $total_insert_count);
     }
 }
 
@@ -248,7 +253,7 @@ function commitTrans()
             broadcast(transactions, $tran);
             trackAccumulate($tran[domain] . _trans);
         }
-        trackAccumulate(all_trans, count($trans_in_insert_sequence));
+        trackAccumulate(trans_count, count($trans_in_insert_sequence));
     }
 }
 
@@ -276,6 +281,7 @@ function tokenSend(
                 balance => $amount,
                 delegate => "mfm-token/send.php",
             ]);
+            trackAccumulate(tokens_count);
         }
         $gas_domain = get_required(gas_domain);
         $gas_account = getAccount($gas_domain, $to_address);
@@ -343,6 +349,7 @@ function tokenSend(
         fee => $fee,
         key => $key,
         next_hash => $next_hash,
+        delegate => $delegate,
         time => time(),
     ]);
 }
