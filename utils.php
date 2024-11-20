@@ -138,14 +138,7 @@ function tokenUndelegate($domain, $address)
     }
 }
 
-function tokenUndelegateAll($address)
-{
-    foreach (getDomains($address) as $domain) {
-        tokenUndelegate($domain, $address);
-    }
-}
-
-function tokenAuthenticate($address, $pass)
+function tokenChangePass($address, $pass)
 {
     $gas_address = get_required(gas_address);
     tokenSend($gas_address, $address, $address, 0, $pass);
@@ -281,6 +274,10 @@ function tokenSend(
                 balance => $amount,
                 delegate => "mfm-token/send.php",
             ]);
+            insertRow(tokens, [
+                domain => $domain,
+                amount => $amount,
+            ]);
             trackAccumulate(tokens_count);
         }
         $gas_domain = get_required(gas_domain);
@@ -355,15 +352,10 @@ function tokenSend(
 }
 
 
-function getDomains($address = null, $search_text = null, $limit = 20, $page = 0)
+function getAccounts($address = null, $limit = 20, $page = 0)
 {
-    $sql = "select distinct `domain` from accounts where 1=1";
-    if ($address != null) {
-        $sql .= " and `address` = '$address'";
-    }
-    if ($search_text != null && $search_text != "") {
-        $sql .= " and `domain` like '$search_text%'";
-    }
-    $sql .= " limit " . $page * $limit . ", $limit";
-    return selectList($sql);
+    return select("select * from accounts t1"
+        . " left join tokens t2 on t1.domain = t2.domain"
+        . " where `address` = '$address'"
+        . " limit " . $page * $limit . ", $limit");
 }

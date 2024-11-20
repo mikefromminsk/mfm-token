@@ -7,10 +7,11 @@ $address = get_required(wallet_admin_address);
 $password = get_required(wallet_admin_password);
 
 requestEquals("/mfm-analytics/init.php");
+requestEquals("/mfm-exchange/init.php");
 
 query("DROP TABLE IF EXISTS `accounts`;");
 query("CREATE TABLE IF NOT EXISTS `accounts` (
-  `domain` varchar(256) COLLATE utf8_bin NOT NULL,
+  `domain` varchar(16) COLLATE utf8_bin NOT NULL,
   `address` varchar(256) COLLATE utf8_bin NOT NULL,
   `prev_key` varchar(256) COLLATE utf8_bin NOT NULL,
   `next_hash` varchar(256) COLLATE utf8_bin NOT NULL,
@@ -21,7 +22,7 @@ query("CREATE TABLE IF NOT EXISTS `accounts` (
 query("DROP TABLE IF EXISTS `trans`;");
 query("CREATE TABLE IF NOT EXISTS `trans` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `domain` varchar(256) COLLATE utf8_bin NOT NULL,
+  `domain` varchar(16) COLLATE utf8_bin NOT NULL,
   `from` varchar(256) COLLATE utf8_bin NOT NULL,
   `to` varchar(256) COLLATE utf8_bin NOT NULL,
   `key` varchar(256) COLLATE utf8_bin NOT NULL,
