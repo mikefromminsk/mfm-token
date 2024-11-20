@@ -38,6 +38,8 @@ $gas_domain = get_required(gas_domain);
 
 tokenRegAccount($gas_domain, $address, $password, 100000000);
 
+trackLinear($gas_domain . _price, 1); // 1 USDT = 1 USD
+
 if (!tokenRegAccount($gas_domain, user, pass)) {
     error("user already exists");
 }

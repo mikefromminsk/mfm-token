@@ -1,4 +1,7 @@
 
+сделать аккаунты делегированные для майнинга не передаваемые токены next_hash = ''
+
+
 TPS
     merge all insert and update request in one sql request
 
