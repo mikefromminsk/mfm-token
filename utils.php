@@ -76,17 +76,13 @@ function tokenBalance($domain, $address)
 function tokenRegAccount($domain, $address, $password, $amount = 0)
 {
     // block if $amount > 0 and domain exists
-    if (getAccount($domain, $address) == null) {
-        return requestEquals("/mfm-token/send.php", [
-            domain => $domain,
-            from_address => owner,
-            to_address => $address,
-            amount => "$amount",
-            pass => ":" . tokenNextHash($domain, $address, $password),
-        ]);
-    } else {
-        return false;
-    }
+    return requestEquals("/mfm-token/send.php", [
+        domain => $domain,
+        from_address => owner,
+        to_address => $address,
+        amount => "$amount",
+        pass => ":" . tokenNextHash($domain, $address, $password),
+    ]);
 }
 
 function tokenRegScript($domain, $address, $script)
@@ -172,9 +168,9 @@ function tokenSendAndCommit($domain, $from, $to, $amount, $password)
 
 function commitAccounts()
 {
-    if ($GLOBALS[accounts] != null) {
+    if ($GLOBALS[mfm_accounts] != null) {
         $total_insert_count = 0;
-        foreach ($GLOBALS[accounts] as $domain => $accounts) {
+        foreach ($GLOBALS[mfm_accounts] as $domain => $accounts) {
             $domain_insert_count = 0;
             foreach ($accounts as $address => $account) {
                 $commit = $account[commit];
@@ -209,38 +205,38 @@ function setAccount($domain, $address, $params)
             $account[$param] = $value;
         }
     }
-    $GLOBALS[accounts][$domain][$address] = $account;
+    $GLOBALS[mfm_accounts][$domain][$address] = $account;
 }
 
 // todo change Address to Account and in schema
 function getAccount($domain, $address)
 {
-    if ($GLOBALS[accounts] == null) {
-        $GLOBALS[accounts] = [];
+    if ($GLOBALS[mfm_accounts] == null) {
+        $GLOBALS[mfm_accounts] = [];
     }
-    if ($GLOBALS[accounts][$domain] == null) {
-        $GLOBALS[accounts][$domain] = [];
+    if ($GLOBALS[mfm_accounts][$domain] == null) {
+        $GLOBALS[mfm_accounts][$domain] = [];
     }
-    $account = $GLOBALS[accounts][$domain][$address];
+    $account = $GLOBALS[mfm_accounts][$domain][$address];
     if ($account == null) {
         $account = selectRowWhere(accounts, [domain => $domain, address => $address]);
     }
-    $GLOBALS[accounts][$domain][$address] = $account;
+    $GLOBALS[mfm_accounts][$domain][$address] = $account;
     return $account;
 }
 
 function saveTran($tran)
 {
-    if ($GLOBALS[token_trans] == null) {
-        $GLOBALS[token_trans] = [];
+    if ($GLOBALS[mfm_token_trans] == null) {
+        $GLOBALS[mfm_token_trans] = [];
     }
-    $GLOBALS[token_trans][] = $tran;
+    $GLOBALS[mfm_token_trans][] = $tran;
 }
 
 function commitTrans()
 {
-    if ($GLOBALS[token_trans] != null) {
-        $trans_in_insert_sequence = array_reverse($GLOBALS[token_trans]);
+    if ($GLOBALS[mfm_token_trans] != null) {
+        $trans_in_insert_sequence = array_reverse($GLOBALS[mfm_token_trans]);
         foreach ($trans_in_insert_sequence as $tran) {
             insertRow(trans, $tran);
             broadcast(transactions, $tran);
@@ -266,7 +262,7 @@ function tokenSend(
     if ($amount != round($amount, 2)) error("amount tick is 0.01");
     if ($amount < 0) error("amount less than 0");
     if ($from_address == owner) {
-        if (strlen($domain) < 3 || strlen($domain) > 32) error("domain length has to be between 3 and 32");
+        if (strlen($domain) < 3 || strlen($domain) > 16) error("domain length has to be between 3 and 32");
         if (tokenBalance($domain, owner) === null) {
             setAccount($domain, owner, [
                 prev_key => "",
@@ -274,12 +270,14 @@ function tokenSend(
                 balance => $amount,
                 delegate => "mfm-token/send.php",
             ]);
-            insertRow(tokens, [
-                domain => $domain,
-                owner => $to_address,
-                amount => $amount,
-            ]);
-            trackAccumulate(tokens_count);
+            if (scalarWhere(tokens, "owner", [domain => $domain]) == null && $amount > 0) {
+                insertRow(tokens, [
+                    domain => $domain,
+                    owner => $to_address,
+                    amount => $amount,
+                ]);
+                trackAccumulate(tokens_count);
+            }
         }
         $gas_domain = get_required(gas_domain);
         $gas_account = getAccount($gas_domain, $to_address);

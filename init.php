@@ -1,13 +1,7 @@
 <?php
-require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-token/utils.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-db/utils.php";
 
 onlyInDebug();
-
-$address = get_required(wallet_admin_address);
-$password = get_required(wallet_admin_password);
-
-requestEquals("/mfm-analytics/init.php");
-requestEquals("/mfm-exchange/init.php");
 
 query("DROP TABLE IF EXISTS `accounts`;");
 query("CREATE TABLE IF NOT EXISTS `accounts` (
@@ -34,18 +28,5 @@ query("CREATE TABLE IF NOT EXISTS `trans` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
 
-$amount = 1000000000;
-$gas_domain = get_required(gas_domain);
-
-tokenRegAccount($gas_domain, $address, $password, 100000000);
-
-trackLinear($gas_domain . _price, 1); // 1 USDT = 1 USD
-
-if (!tokenRegAccount($gas_domain, user, pass)) {
-    error("user already exists");
-}
-
-$response[success] = true;
-
-echo json_encode($response);
+echo json_encode([success => true]);
 
