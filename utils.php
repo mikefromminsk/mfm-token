@@ -22,14 +22,16 @@ function tokenPass($domain, $address, $password)
     return "$key:$next_hash";
 }
 
-function tokenTrans($domain, $address, $page, $size)
+function tokenTrans($domain, $from_address, $to_address, $page, $size)
 {
     $sql = "select * from trans where 1 = 1";
-    if ($address != null)
-        $sql .= " and (`from` = '$address' or `to` = '$address')";
+    if ($from_address != null)
+        $sql .= " and (`from` = '$from_address' or `to` = '$from_address')";
+    if ($to_address != null)
+        $sql .= " and (`from` = '$to_address' or `to` = '$to_address')";
     if ($domain != null)
         $sql .= " and `domain` = '$domain'";
-    $sql .= " order by time desc limit " . ($page - 1) * $size . ", $size";
+    $sql .= " order by time desc limit " . $page * $size . ", $size";
     return select($sql);
 }
 
