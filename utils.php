@@ -350,6 +350,8 @@ function tokenSend(
         delegate => $delegate,
         time => time(),
     ]);
+
+    return $next_hash;
 }
 
 

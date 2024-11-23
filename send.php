@@ -8,6 +8,6 @@ $amount = get_int_required(amount);
 $pass = get_required(pass);
 $delegate = get_string(delegate);
 
-tokenSend($domain, $from_address, $to_address, $amount, $pass, $delegate);
+$response[next_hash] = tokenSend($domain, $from_address, $to_address, $amount, $pass, $delegate);
 
-commit();
+commit($response);
