@@ -6,29 +6,19 @@ include_once $_SERVER[DOCUMENT_ROOT] . "/mfm-analytics/utils.php";
 $domain = get_required(domain);
 $address = get_string(address);
 
-$token[domain] = $domain;
-$token[nodes] = 1;
-$tran = tokenFirstTran($domain);
-$token[created] = $tran[time];
-$token[total] = $tran[amount];
-$token[owner] = $tran[to];
-$token[circulation] = $tran[amount] - tokenBalance($domain, $token[owner]);
+$token = selectRowWhere(tokens, [domain => $domain]);
+$token[emitting] = str_replace("mfm-", "", explode('/', tokenSecondTran($domain)[delegate] ?: "by owner")[0]);
+$token[circulation] = $token[amount] - tokenBalance($domain, $token[owner]);
+$token[circulation_percent] = $token[circulation] / $token[amount] * 100;
 
-$token[circulation_percent] = $token[circulation] / $tran[amount] * 100;
-
-$token[fee] = 100 - $token[circulation_percent];
-$token[balance] = tokenBalance($domain, $address);
-$token[price] = getCandleLastValue($domain . _price);
-$token[price24] = getCandleChange24($domain . _price);
 $token[trans] = getCandleLastValue($domain . _trans);
 $token[accounts] = getCandleLastValue($domain . _accounts);
+
 $token[trans_count] = getCandleLastValue(trans_count);
 $token[accounts_count] = getCandleLastValue(accounts_count);
 $token[tokens_count] = getCandleLastValue(tokens_count);
-$token[volume] = getCandleLastValue($domain . _volume);
-$token[emitting] = str_replace("mfm-", "", explode('/', tokenSecondTran($domain)[delegate] ?: "by owner")[0]);
 
-$token[mcap] = $token[total] * $token[price];
+$token[balance] = tokenBalance($domain, $address);
 
 commit($token);
 
