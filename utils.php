@@ -264,7 +264,7 @@ function tokenSend(
     if ($amount != round($amount, 2)) error("amount tick is 0.01");
     if ($amount < 0) error("amount less than 0");
     if ($from_address == owner) {
-        if (strlen($domain) < 3 || strlen($domain) > 16) error("domain length has to be between 3 and 32");
+        if (strlen($domain) < 3 || strlen($domain) > 16) error("domain length has to be between 3 and 16");
         if (tokenBalance($domain, owner) === null) {
             setAccount($domain, owner, [
                 prev_key => "",
@@ -277,6 +277,7 @@ function tokenSend(
                     domain => $domain,
                     owner => $to_address,
                     amount => $amount,
+                    created => time(),
                 ]);
                 trackAccumulate(tokens_count);
             }
