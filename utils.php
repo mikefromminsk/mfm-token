@@ -95,7 +95,7 @@ function tokenRegScript($domain, $address, $script)
             from_address => owner,
             to_address => $address,
             amount => "0", // TODO если отправить 0 то ошибка
-            pass => ":",
+            pass => ":" . md5(random_id()),
             delegate => $script,
         ]);
     } else {
