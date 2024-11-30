@@ -24,9 +24,9 @@ query("CREATE TABLE IF NOT EXISTS `trans` (
   `delegate` varchar(256) COLLATE utf8_bin DEFAULT NULL,
   `amount` double NOT NULL,    
   `fee` double NOT NULL,        
-  `time` int(11) NOT NULL,    
-  PRIMARY KEY (`next_hash`)
+  `time` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
+//  PRIMARY KEY (`next_hash`)
 
 echo json_encode([success => true]);
 

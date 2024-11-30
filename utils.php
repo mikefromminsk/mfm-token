@@ -37,12 +37,12 @@ function tokenTrans($domain, $from_address, $to_address, $page, $size)
 
 function tokenFirstTran($domain)
 {
-    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = 'owner' order by `id` limit 1");
+    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = 'owner' order by `time` limit 1");
 }
 
 function tokenSecondTran($domain)
 {
-    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = 'owner' order by `id` limit 1, 1");
+    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = 'owner' order by `time` limit 1, 1");
 }
 
 function tokenTran($next_hash)
@@ -257,6 +257,7 @@ function tokenSend(
     $delegate = null
 )
 {
+    if ($from_address == $to_address) error("from_address and to_address are the same");
     if ($pass != null) {
         $key = explode(":", $pass)[0];
         $next_hash = explode(":", $pass)[1];
