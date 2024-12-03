@@ -364,3 +364,10 @@ function getAccounts($address = null, $limit = 20, $page = 0)
         . " where `address` = '$address'"
         . " limit " . $page * $limit . ", $limit");
 }
+
+
+function commitTokens()
+{
+    commitAccounts();
+    commitTrans();
+}
