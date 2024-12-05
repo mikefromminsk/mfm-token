@@ -188,6 +188,7 @@ function commitAccounts()
             trackAccumulate($domain . _accounts, $domain_insert_count);
         }
         trackAccumulate(accounts_count, $total_insert_count);
+        $GLOBALS[mfm_accounts] = null;
     }
 }
 
@@ -245,6 +246,7 @@ function commitTrans()
             trackAccumulate($tran[domain] . _trans);
         }
         trackAccumulate(trans_count, count($trans_in_insert_sequence));
+        $GLOBALS[mfm_token_trans] = null;
     }
 }
 
