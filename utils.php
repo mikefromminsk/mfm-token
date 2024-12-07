@@ -3,6 +3,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-db/utils.php";
 require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-analytics/utils.php";
 
 $gas_domain = get_config_required(gas_domain);
+const genesis_address = "owner";
 
 function tokenKey($domain, $address, $password, $prev_key = "")
 {
@@ -37,12 +38,12 @@ function tokenTrans($domain, $from_address, $to_address, $page, $size)
 
 function tokenFirstTran($domain)
 {
-    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = 'owner' order by `time` limit 1");
+    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = '" . genesis_address . "' order by `time` limit 1");
 }
 
 function tokenSecondTran($domain)
 {
-    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = 'owner' order by `time` limit 1, 1");
+    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = '" . genesis_address . "' order by `time` limit 1, 1");
 }
 
 function tokenTran($next_hash)
@@ -52,6 +53,8 @@ function tokenTran($next_hash)
 
 function tokenLastTran($domain, $from_address, $to_address = null)
 {
+    // TODO add token cache check before
+
     $sql = "select * from `trans` where `domain` = '$domain'";
     if ($from_address != null)
         $sql .= " and `from` = '$from_address'";
@@ -80,7 +83,7 @@ function tokenRegAccount($domain, $address, $password, $amount = 0)
     // block if $amount > 0 and domain exists
     return requestEquals("/mfm-token/send.php", [
         domain => $domain,
-        from_address => owner,
+        from_address => genesis_address,
         to_address => $address,
         amount => "$amount",
         pass => ":" . tokenNextHash($domain, $address, $password),
@@ -92,7 +95,7 @@ function tokenRegScript($domain, $address, $script)
     if (getAccount($domain, $address) == null) {
         return requestEquals("/mfm-token/send.php", [
             domain => $domain,
-            from_address => owner,
+            from_address => genesis_address,
             to_address => $address,
             amount => "0", // TODO если отправить 0 то ошибка
             pass => ":" . md5(random_id()),
@@ -109,7 +112,7 @@ function tokenDelegate($domain, $address, $pass, $script)
     if (getAccount($domain, $address) != null) {
         return requestEquals("/mfm-token/send.php", [
             domain => $domain,
-            from_address => owner,
+            from_address => genesis_address,
             to_address => $address,
             amount => "0", // TODO если отправить 0 то ошибка
             pass => $pass,
@@ -125,7 +128,7 @@ function tokenUndelegate($domain, $address)
     if (getAccount($domain, $address) != null) {
         return requestEquals("/mfm-token/send.php", [
             domain => $domain,
-            from_address => owner,
+            from_address => genesis_address,
             to_address => $address,
             amount => "0", // TODO если отправить 0 то ошибка
             pass => ":",
@@ -136,10 +139,9 @@ function tokenUndelegate($domain, $address)
     }
 }
 
-function tokenChangePass($address, $pass)
+function tokenChangePass($domain, $address, $pass)
 {
-    $gas_address = get_required(gas_address);
-    tokenSend($gas_address, $address, $address, 0, $pass);
+    tokenSend($domain, $address, $address, 0, $pass);
 }
 
 function requestAccount($domain, $address)
@@ -266,16 +268,16 @@ function tokenSend(
     }
     if ($amount != round($amount, 2)) error("amount tick is 0.01");
     if ($amount < 0) error("amount less than 0");
-    if ($from_address == owner) {
+    if ($from_address == genesis_address) {
         if (strlen($domain) < 3 || strlen($domain) > 16) error("domain length has to be between 3 and 16");
-        if (tokenBalance($domain, owner) === null) {
-            setAccount($domain, owner, [
+        if (tokenBalance($domain, genesis_address) === null) {
+            setAccount($domain, genesis_address, [
                 prev_key => "",
                 next_hash => "",
                 balance => $amount,
                 delegate => "mfm-token/send.php",
             ]);
-            if (scalarWhere(tokens, "owner", [domain => $domain]) == null && $amount > 0) {
+            if (scalarWhere(tokens, owner, [domain => $domain]) == null && $amount > 0) {
                 insertRow(tokens, [
                     domain => $domain,
                     owner => $to_address,
