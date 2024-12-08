@@ -60,7 +60,7 @@ function tokenLastTran($domain, $from_address, $to_address = null)
         $sql .= " and `from` = '$from_address'";
     if ($to_address != null)
         $sql .= " and `to` = '$to_address'";
-    $sql .= " order by `id` desc limit 1";
+    $sql .= " order by `time` desc limit 1";
     return selectRow($sql);
 }
 
