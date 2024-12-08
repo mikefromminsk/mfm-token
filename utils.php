@@ -2,7 +2,7 @@
 require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-db/utils.php";
 require_once $_SERVER["DOCUMENT_ROOT"] . "/mfm-analytics/utils.php";
 
-$gas_domain = get_config_required(gas_domain);
+const gas_domain = "usdt";
 const genesis_address = "owner";
 
 function tokenKey($domain, $address, $password, $prev_key = "")
@@ -287,9 +287,8 @@ function tokenSend(
                 trackAccumulate(tokens_count);
             }
         }
-        $gas_domain = get_required(gas_domain);
-        $gas_account = getAccount($gas_domain, $to_address);
-        if ($domain != $gas_domain && $gas_account[delegate] != null) {
+        $gas_account = getAccount(gas_domain, $to_address);
+        if ($domain != gas_domain && $gas_account[delegate] != null) {
             $delegate = $gas_account[delegate];
         }
         if (tokenBalance($domain, $to_address) === null) {
