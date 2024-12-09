@@ -8,8 +8,8 @@ $address = get_string(address);
 
 $token = selectRowWhere(tokens, [domain => $domain]);
 $token[emitting] = str_replace("mfm-", "", explode('/', tokenSecondTran($domain)[delegate] ?: "by owner")[0]);
-$token[circulation] = $token[amount] - tokenBalance($domain, $token[owner]);
-$token[circulation_percent] = $token[circulation] / $token[amount] * 100;
+$token[circulation] = $token[total] - tokenBalance($domain, $token[owner]);
+$token[circulation_percent] = $token[circulation] / $token[total] * 100;
 
 $token[trans] = getCandleLastValue($domain . _trans);
 $token[accounts] = getCandleLastValue($domain . _accounts);

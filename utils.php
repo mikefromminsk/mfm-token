@@ -23,16 +23,18 @@ function tokenPass($domain, $address, $password)
     return "$key:$next_hash";
 }
 
-function tokenTrans($domain, $from_address, $to_address, $page, $size)
+function tokenTrans($domain, $from_address, $to_address, $page = 0, $size = 10)
 {
-    $sql = "select * from trans where 1 = 1";
+    $sql = "select * from trans t1"
+        . " left join tokens t2 on t1.`domain` = t2.`domain`"
+        . " where 1=1";
     if ($from_address != null)
         $sql .= " and (`from` = '$from_address' or `to` = '$from_address')";
     if ($to_address != null)
         $sql .= " and (`from` = '$to_address' or `to` = '$to_address')";
     if ($domain != null)
-        $sql .= " and `domain` = '$domain'";
-    $sql .= " order by time desc limit " . $page * $size . ", $size";
+        $sql .= " and t1.`domain` = '$domain'";
+    $sql .= " order by t1.`time` desc limit " . $page * $size . ", $size";
     return select($sql);
 }
 
@@ -53,20 +55,7 @@ function tokenTran($next_hash)
 
 function tokenLastTran($domain, $from_address, $to_address = null)
 {
-    // TODO add token cache check before
-
-    $sql = "select * from `trans` where `domain` = '$domain'";
-    if ($from_address != null)
-        $sql .= " and `from` = '$from_address'";
-    if ($to_address != null)
-        $sql .= " and `to` = '$to_address'";
-    $sql .= " order by `time` desc limit 1";
-    return selectRow($sql);
-}
-
-function tokenOwner($domain)
-{
-    return tokenFirstTran($domain)[to];
+    return (tokenTrans($domain, $from_address, $to_address, 0, 1) ?: [])[0];
 }
 
 function tokenBalance($domain, $address)
@@ -261,7 +250,7 @@ function tokenSend(
     $delegate = null
 )
 {
-    if ($from_address == $to_address) error("from_address and to_address are the same");
+    if ($from_address == $to_address && $amount != 0) error("from_address and to_address are the same");
     if ($pass != null) {
         $key = explode(":", $pass)[0];
         $next_hash = explode(":", $pass)[1];
@@ -281,7 +270,7 @@ function tokenSend(
                 insertRow(tokens, [
                     domain => $domain,
                     owner => $to_address,
-                    amount => $amount,
+                    total => $amount,
                     created => time(),
                 ]);
                 trackAccumulate(tokens_count);
