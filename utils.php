@@ -270,7 +270,7 @@ function tokenSend(
                 insertRow(tokens, [
                     domain => $domain,
                     owner => $to_address,
-                    total => $amount,
+                    supply => $amount,
                     created => time(),
                 ]);
                 trackAccumulate(tokens_count);
