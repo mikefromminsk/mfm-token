@@ -38,11 +38,6 @@ function tokenTrans($domain, $from_address, $to_address, $page = 0, $size = 10)
     return select($sql);
 }
 
-function tokenFirstTran($domain)
-{
-    return selectRow("select * from `trans` where `domain` = '$domain' and `from` = '" . genesis_address . "' order by `time` limit 1");
-}
-
 function tokenSecondTran($domain)
 {
     return selectRow("select * from `trans` where `domain` = '$domain' and `from` = '" . genesis_address . "' order by `time` limit 1, 1");

@@ -28,5 +28,17 @@ query("CREATE TABLE IF NOT EXISTS `trans` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
 //  PRIMARY KEY (`next_hash`)
 
+query("DROP TABLE IF EXISTS `tokens`;");
+query("CREATE TABLE IF NOT EXISTS `tokens` (
+    `domain` varchar(16) COLLATE utf8_bin NOT NULL,
+    `owner` varchar(256) COLLATE utf8_bin NOT NULL,
+    `supply` double NOT NULL,
+    `price` double DEFAULT 0,
+    `price24` double DEFAULT 0,
+    `volume24` double DEFAULT 0,
+    `created` int NOT NULL,
+   PRIMARY KEY (`domain`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
+
 echo json_encode([success => true]);
 

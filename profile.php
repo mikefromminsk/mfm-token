@@ -10,15 +10,13 @@ $token = selectRowWhere(tokens, [domain => $domain]);
 $token[emitting] = str_replace("mfm-", "", explode('/', tokenSecondTran($domain)[delegate] ?: "by owner")[0]);
 $token[circulation] = $token[supply] - tokenBalance($domain, $token[owner]);
 $token[circulation_percent] = $token[circulation] / $token[supply] * 100;
+$token[balance] = tokenBalance($domain, $address);
 
 $token[trans] = getCandleLastValue($domain . _trans);
 $token[accounts] = getCandleLastValue($domain . _accounts);
-
 $token[trans_count] = getCandleLastValue(trans_count);
 $token[accounts_count] = getCandleLastValue(accounts_count);
 $token[tokens_count] = getCandleLastValue(tokens_count);
-
-$token[balance] = tokenBalance($domain, $address);
 
 commit($token);
 
