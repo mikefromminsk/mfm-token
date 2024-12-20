@@ -17,7 +17,10 @@ function tokenNextHash($domain, $address, $password, $prev_key = "")
 
 function tokenPass($domain, $address, $password)
 {
-    $account = getAccount($domain, $address);
+    $account = http_post("/mfm-token/account.php", [
+        domain => $domain,
+        address => $address,
+    ])[account];
     $key = tokenKey($domain, $address, $password, $account[prev_key]);
     $next_hash = tokenNextHash($domain, $address, $password, $key);
     return "$key:$next_hash";
@@ -76,18 +79,14 @@ function tokenRegAccount($domain, $address, $password, $amount = 0)
 
 function tokenRegScript($domain, $address, $script)
 {
-    if (getAccount($domain, $address) == null) {
-        return requestEquals("/mfm-token/send.php", [
-            domain => $domain,
-            from_address => genesis_address,
-            to_address => $address,
-            amount => "0", // TODO если отправить 0 то ошибка
-            pass => ":" . md5(random_id()),
-            delegate => $script,
-        ]);
-    } else {
-        return false;
-    }
+    return requestEquals("/mfm-token/send.php", [
+        domain => $domain,
+        from_address => genesis_address,
+        to_address => $address,
+        amount => "0", // TODO если отправить 0 то ошибка
+        pass => ":" . md5(random_id()),
+        delegate => $script,
+    ]);
 }
 
 // ???
@@ -133,7 +132,7 @@ function requestAccount($domain, $address)
     return http_post("/mfm-token/account.php", [
         domain => $domain,
         address => $address,
-    ]);
+    ])[account];
 }
 
 function tokenSendAndCommit($domain, $from, $to, $amount, $password)
@@ -208,7 +207,10 @@ function getAccount($domain, $address)
     }
     $account = $GLOBALS[mfm_accounts][$domain][$address];
     if ($account == null) {
-        $account = selectRowWhere(accounts, [domain => $domain, address => $address]);
+        $account = http_post("/mfm-token/account.php", [
+            domain => $domain,
+            address => $address,
+        ])[account];
     }
     $GLOBALS[mfm_accounts][$domain][$address] = $account;
     return $account;
@@ -245,6 +247,14 @@ function tokenSend(
     $delegate = null
 )
 {
+    return requestEquals("/mfm-token/send.php", [
+        domain => $domain,
+        from_address => $from_address,
+        to_address => $to_address,
+        amount => "$amount",
+        pass => $pass,
+        delegate => $delegate,
+    ]);
     if ($from_address == $to_address && $amount != 0) error("from_address and to_address are the same");
     if ($pass != null) {
         $key = explode(":", $pass)[0];
@@ -346,10 +356,9 @@ function tokenSend(
 
 function getAccounts($address = null, $limit = 20, $page = 0)
 {
-    return select("select * from accounts t1"
-        . " left join tokens t2 on t1.domain = t2.domain"
-        . " where `address` = '$address'"
-        . " limit " . $page * $limit . ", $limit");
+    return http_post("/mfm-token/accounts.php", [
+        address => $address,
+    ])[accounts];
 }
 
 
