@@ -17,7 +17,7 @@ function tokenNextHash($domain, $address, $password, $prev_key = "")
 
 function tokenPass($domain, $address, $password)
 {
-    $account = http_post("/mfm-token/account.php", [
+    $account = http_post("/mfm-token/account", [
         domain => $domain,
         address => $address,
     ])[account];
@@ -68,7 +68,7 @@ function tokenBalance($domain, $address)
 function tokenRegAccount($domain, $address, $password, $amount = 0)
 {
     // block if $amount > 0 and domain exists
-    return requestEquals("/mfm-token/send.php", [
+    return requestEquals("/mfm-token/send", [
         domain => $domain,
         from_address => genesis_address,
         to_address => $address,
@@ -79,7 +79,7 @@ function tokenRegAccount($domain, $address, $password, $amount = 0)
 
 function tokenRegScript($domain, $address, $script)
 {
-    return requestEquals("/mfm-token/send.php", [
+    return requestEquals("/mfm-token/send", [
         domain => $domain,
         from_address => genesis_address,
         to_address => $address,
@@ -93,7 +93,7 @@ function tokenRegScript($domain, $address, $script)
 function tokenDelegate($domain, $address, $pass, $script)
 {   ///!!!!! dont $pass  !!!!!!!!!!
     if (getAccount($domain, $address) != null) {
-        return requestEquals("/mfm-token/send.php", [
+        return requestEquals("/mfm-token/send", [
             domain => $domain,
             from_address => genesis_address,
             to_address => $address,
@@ -109,7 +109,7 @@ function tokenDelegate($domain, $address, $pass, $script)
 function tokenUndelegate($domain, $address)
 {
     if (getAccount($domain, $address) != null) {
-        return requestEquals("/mfm-token/send.php", [
+        return requestEquals("/mfm-token/send", [
             domain => $domain,
             from_address => genesis_address,
             to_address => $address,
@@ -129,7 +129,7 @@ function tokenChangePass($domain, $address, $pass)
 
 function requestAccount($domain, $address)
 {
-    return http_post("/mfm-token/account.php", [
+    return http_post("/mfm-token/account", [
         domain => $domain,
         address => $address,
     ])[account];
@@ -141,7 +141,7 @@ function tokenSendAndCommit($domain, $from, $to, $amount, $password)
     if ($account != null) {
         $key = tokenKey($domain, $from, $password, $account[prev_key]);
         $next_hash = tokenNextHash($domain, $from, $password, $key);
-        return requestEquals("/mfm-token/send.php", [
+        return requestEquals("/mfm-token/send", [
             domain => $domain,
             from_address => $from,
             to_address => $to,
@@ -207,7 +207,7 @@ function getAccount($domain, $address)
     }
     $account = $GLOBALS[mfm_accounts][$domain][$address];
     if ($account == null) {
-        $account = http_post("/mfm-token/account.php", [
+        $account = http_post("/mfm-token/account", [
             domain => $domain,
             address => $address,
         ])[account];
@@ -247,7 +247,7 @@ function tokenSend(
     $delegate = null
 )
 {
-    return requestEquals("/mfm-token/send.php", [
+    return requestEquals("/mfm-token/send", [
         domain => $domain,
         from_address => $from_address,
         to_address => $to_address,
@@ -269,7 +269,7 @@ function tokenSend(
                 prev_key => "",
                 next_hash => "",
                 balance => $amount,
-                delegate => "mfm-token/send.php",
+                delegate => "mfm-token/send",
             ]);
             if (scalarWhere(tokens, owner, [domain => $domain]) == null && $amount > 0) {
                 insertRow(tokens, [
@@ -356,7 +356,7 @@ function tokenSend(
 
 function getAccounts($address = null, $limit = 20, $page = 0)
 {
-    return http_post("/mfm-token/accounts.php", [
+    return http_post("/mfm-token/accounts", [
         address => $address,
     ])[accounts];
 }
