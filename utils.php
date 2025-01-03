@@ -17,7 +17,7 @@ function tokenNextHash($domain, $address, $password, $prev_key = "")
 
 function tokenPass($domain, $address, $password)
 {
-    $account = http_post("/mfm-token/account", [
+    $account = post_data("/mfm-token/account", [
         domain => $domain,
         address => $address,
     ])[account];
@@ -129,7 +129,7 @@ function tokenChangePass($domain, $address, $pass)
 
 function requestAccount($domain, $address)
 {
-    return http_post("/mfm-token/account", [
+    return post_data("/mfm-token/account", [
         domain => $domain,
         address => $address,
     ])[account];
@@ -207,7 +207,7 @@ function getAccount($domain, $address)
     }
     $account = $GLOBALS[mfm_accounts][$domain][$address];
     if ($account == null) {
-        $account = http_post("/mfm-token/account", [
+        $account = post_data("/mfm-token/account", [
             domain => $domain,
             address => $address,
         ])[account];
@@ -356,7 +356,7 @@ function tokenSend(
 
 function getAccounts($address = null, $limit = 20, $page = 0)
 {
-    return http_post("/mfm-token/accounts", [
+    return post_data("/mfm-token/accounts", [
         address => $address,
     ])[accounts];
 }
